@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #333333;
+    }
+    .container {
+      background-color: #f0f0f0;
+      border-radius: 8px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      width: 90%;
+      max-width: 300px;
+      position: relative;
+    }
+    .input-container {
+      margin-bottom: 15px;
+    }
+    .input-container label {
+      font-weight: bold;
+      font-size: 12px;
+      color: #666666;
+      display: block;
+      margin-bottom: 5px;
+    }
+    .input-container input {
+      width: 100%;
+      height: 40px;
+      border: none;
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .input-container input::placeholder {
+      color: #ccc;
+    }
+    .remember-password {
+      font-size: 12px;
+      color: #666666;
+      text-align: left;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+    }
+    .remember-checkbox {
+      margin-right: 5px;
+    }
+    .remember-checkbox input {
+      width: 16px;
+      height: 16px;
+    }
+    .remember-label {
+      margin-left: 5px;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: 15px;
+    }
+    .button-container button {
+      background-color: #ff8800;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-transform: uppercase;
+      width: 150px;
+    }
+    .button-container button:hover {
+      background-color: #ff9900;
+    }
+    .icon {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .success-box, .error-box {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .success-box i, .error-box i {
+      font-size: 48px;
+    }
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+      text-transform: uppercase;
+      color: #666666;
+    }
+    .signup-link-button {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .signup-link-button a {
+      color: #ff8800;
+      text-decoration: none;
+      cursor: pointer;
+      }
+    /* ... (Aynı stil kodları) ... */
+    .welcome-container {
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .welcome-clock {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .welcome-date {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="welcomeContainer" style="display: none;">
+  <div class="title" id="welcomeTitle">HOŞGELDİNİZ</div>
+  <div class="icon">
+    <div class="success-box"><i class="fas fa-check-circle"></i><p id="welcomeMessage">Giriş yapıldı. Hoşgeldiniz!</p></div>
+  </div>
+</div>
+
+<div class="container" id="signupContainer" style="display: none;">
+  <div class="title">YENİ HESAP OLUŞTUR</div>
+  <form id="signupForm">
+    <div class="input-container">
+      <label for="newUsername">Kullanıcı Adı</label>
+      <input type="text" id="newUsername" placeholder="">
+    </div>
+    <div class="input-container">
+      <label for="newPassword">Parola</label>
+      <input type="password" id="newPassword" placeholder="">
+    </div>
+    <div class="button-container">
+      <button type="button" onclick="createAccount()">Hesap Oluştur</button>
+    </div>
+  </form>
+  <div class="signup-link-button">
+    Zaten hesabınız var mı? <a onclick="showLoginContainer()">Giriş yapın</a>
+  </div>
+</div>
+
+<script>
+var users = [];
+
+function checkLogin() {
+  var username = document.getElementById("username").value;
+  var password = document.getElementById("password").value;
+  var successBox = document.getElementById("successBox");
+  var errorBox = document.getElementById("errorBox");
+
+  var user = users.find(function(u) {
+    return u.username === username && u.password === password;
+  });
+
+  if (user) {
+    successBox.style.display = "block";
+    errorBox.style.display = "none";
+    setTimeout(function() {
+      var loginContainer = document.getElementById("loginContainer");
+      loginContainer.style.display = "none";
+
+      var welcomeContainer = document.getElementById("welcomeContainer");
+      welcomeContainer.style.display = "block";
+
+      var welcomeTitle = document.getElementById("welcomeTitle");
+      var welcomeMessage = document.getElementById("welcomeMessage");
+      welcomeTitle.textContent = "HOŞGELDİNİZ " + username.toUpperCase();
+      welcomeMessage.textContent = "Giriş yapıldı. Hoşgeldiniz, " + username + "!";
+
+      var welcomeClock = document.createElement("div");
+      var welcomeDate = document.createElement("div");
+      welcomeClock.className = "welcome-clock";
+      welcomeDate.className = "welcome-date";
+
+      setInterval(function() {
+        var now = new Date();
+        var hours = now.getHours().toString().padStart(2, "0");
+        var minutes = now.getMinutes().toString().padStart(2, "0");
+        var seconds = now.getSeconds().toString().padStart(2, "0");
+        var date = now.toLocaleDateString();
+
+        welcomeClock.textContent = hours + ":" + minutes + ":" + seconds;
+        welcomeDate.textContent = date;
+      }, 1000);
+
+      welcomeContainer.appendChild(welcomeClock);
+      welcomeContainer.appendChild(welcomeDate);
+    }, 1500);
+  } else {
+    errorBox.style.display = "block";
+    successBox.style.display = "none";
+  }
+}
+
+// ... (Diğer JavaScript fonksiyonları)
+</script>
+
+</body>
+</html>
